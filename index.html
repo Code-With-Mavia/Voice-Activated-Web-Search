@@ -1,216 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Futuristic Voice Search</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Voice Search - Pro UI</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
-  :root {
-    --neon-blue: #00f0ff;
-    --neon-pink: #ff4cdb;
-    --neon-green: #39ff14;
-    --bg-light: #e0f7fa;
-    --bg-dark: #0a0a13;
-    --glass-bg-light: rgba(255, 255, 255, 0.15);
-    --glass-bg-dark: rgba(15, 15, 23, 0.65);
-  }
+    :root {
+      --clr-primary: #4ade80;
+      --clr-secondary: #2563eb;
+      --clr-bg-light: #f9fafb;
+      --clr-bg-dark: #121212;
+      --clr-text-light: #1f2937;
+      --clr-text-dark: #e5e7eb;
+      --transition-speed: 0.35s;
+    }
 
-  * {
-    box-sizing: border-box;
-  }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-  body {
-    margin: 0;
-    font-family: 'Exo 2', sans-serif;
-    background: var(--bg-light);
-    color: #111;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: background 0.5s ease, color 0.5s ease;
-  }
+    body {
+      background-color: var(--clr-bg-light);
+      color: var(--clr-text-light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+    }
 
-  body.dark {
-    background: var(--bg-dark);
-    color: #eee;
-  }
+    body.dark {
+      background-color: var(--clr-bg-dark);
+      color: var(--clr-text-dark);
+    }
 
-  .container {
-    background: var(--glass-bg-light);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 25px;
-    border: 2px solid transparent;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-    padding: 3rem 4rem;
-    max-width: 400px;
-    text-align: center;
-    position: relative;
-    transition: background 0.5s ease, border-color 0.5s ease;
-  }
-
-  body.dark .container {
-    background: var(--glass-bg-dark);
-    border-color: var(--neon-pink);
-    box-shadow: 0 0 25px var(--neon-pink);
-  }
-
-  h1 {
-    font-weight: 700;
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  #status {
-    font-size: 1.25rem;
-    margin: 1.5rem 0 3rem;
-    color: var(--neon-green);
-    font-weight: 600;
-    text-shadow: 0 0 8px var(--neon-green);
-    min-height: 1.5em;
-  }
-
-  button {
-    background: transparent;
-    border: 3px solid var(--neon-blue);
-    padding: 0.75rem 2rem;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--neon-blue);
-    cursor: pointer;
-    border-radius: 50px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    box-shadow: 0 0 15px var(--neon-blue);
-    transition: all 0.3s ease;
-    user-select: none;
-    position: relative;
-    overflow: hidden;
-  }
-
-  button::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 200%;
-    height: 200%;
-    background: var(--neon-pink);
-    transform: translate(-50%, -50%) scale(0);
-    transition: transform 0.4s ease;
-    border-radius: 50%;
-    z-index: -1;
-    opacity: 0.7;
-  }
-
-  button:hover::before,
-  button:focus::before {
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  button:hover,
-  button:focus {
-    color: #111;
-    box-shadow: 0 0 30px var(--neon-pink);
-    border-color: var(--neon-pink);
-    outline: none;
-  }
-
-  .toggle-container {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-  }
-
-  .toggle-button {
-    width: 60px;
-    height: 32px;
-    border-radius: 50px;
-    background: var(--neon-blue);
-    box-shadow: 0 0 12px var(--neon-blue);
-    cursor: pointer;
-    position: relative;
-    transition: background 0.5s ease;
-  }
-
-  body.dark .toggle-button {
-    background: var(--neon-pink);
-    box-shadow: 0 0 18px var(--neon-pink);
-  }
-
-  .toggle-circle {
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 26px;
-    height: 26px;
-    background: #111;
-    border-radius: 50%;
-    transition: left 0.4s ease;
-    box-shadow: 0 0 6px #111;
-  }
-
-  body.dark .toggle-circle {
-    left: 31px;
-  }
-
-  @media (max-width: 450px) {
     .container {
-      padding: 2rem 2rem;
+      background: linear-gradient(145deg, #ffffff, #e6e9f0);
+      border-radius: 24px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+      padding: 3.5rem 4rem;
+      width: 400px;
       max-width: 90vw;
+      text-align: center;
+      transition: background var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    }
+
+    body.dark .container {
+      background: linear-gradient(145deg, #1e1e1e, #292929);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.75);
     }
 
     h1 {
-      font-size: 2.2rem;
+      font-weight: 600;
+      font-size: 2.8rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+      color: var(--clr-secondary);
+      background: linear-gradient(90deg, var(--clr-primary), var(--clr-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      user-select: text;
+    }
+
+    #status {
+      font-size: 1.2rem;
+      margin-bottom: 3rem;
+      min-height: 1.5em;
+      color: var(--clr-primary);
+      font-weight: 500;
+      user-select: text;
     }
 
     button {
-      font-size: 1rem;
-      padding: 0.6rem 1.5rem;
+      padding: 0.8rem 3rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      background: var(--clr-primary);
+      color: #fff;
+      box-shadow: 0 6px 12px rgba(74, 222, 128, 0.5);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+      outline-offset: 4px;
     }
-  }
-</style>
+
+    button:focus-visible {
+      outline: 3px solid var(--clr-secondary);
+      outline-offset: 4px;
+    }
+
+    button:hover {
+      background-color: var(--clr-secondary);
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.7);
+    }
+
+    /* Smooth ripple effect on button */
+    button::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      box-shadow: 0 0 15px 10px rgba(255,255,255,0.3);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    button:active::after {
+      opacity: 1;
+      transition: opacity 0.1s ease;
+    }
+
+    /* Dark mode toggle */
+
+    .toggle-wrapper {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      user-select: none;
+    }
+
+    .toggle {
+      width: 52px;
+      height: 28px;
+      border-radius: 14px;
+      background-color: #ddd;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    body.dark .toggle {
+      background-color: var(--clr-primary);
+    }
+
+    .toggle-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #fff;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: left 0.3s ease;
+    }
+
+    body.dark .toggle-circle {
+      left: 26px;
+    }
+
+  </style>
 </head>
 <body>
-  <div class="toggle-container" role="button" tabindex="0" aria-label="Toggle dark/light mode" id="modeToggle">
-    <div class="toggle-button">
+  <div class="toggle-wrapper" role="button" tabindex="0" aria-label="Toggle dark mode" id="toggleDarkMode">
+    <div class="toggle">
       <div class="toggle-circle"></div>
     </div>
   </div>
 
-  <div class="container" role="main">
+  <main class="container" role="main" aria-live="polite" aria-atomic="true">
     <h1>Voice Search</h1>
-    <div id="status" aria-live="polite">Press the button and speak</div>
-    <button id="startBtn" aria-pressed="false" aria-label="Start voice recognition">Start Listening</button>
-  </div>
+    <div id="status">Press &amp; hold the button to speak</div>
+    <button id="startBtn" aria-pressed="false" aria-label="Activate voice recognition">
+      🎤 Hold to Speak
+    </button>
+  </main>
 
-<script>
-  const modeToggle = document.getElementById('modeToggle');
-  modeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-  });
-  modeToggle.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
+  <script>
+    const toggle = document.getElementById('toggleDarkMode');
+    toggle.addEventListener('click', () => {
       document.body.classList.toggle('dark');
-    }
-  });
+    });
+    toggle.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        document.body.classList.toggle('dark');
+      }
+    });
 
-  const statusEl = document.getElementById('status');
-  const startBtn = document.getElementById('startBtn');
+    const startBtn = document.getElementById('startBtn');
+    const status = document.getElementById('status');
 
-  startBtn.addEventListener('click', () => {
-    statusEl.textContent = "Listening... (Demo mode)";
-    startBtn.setAttribute('aria-pressed', 'true');
-  });
-</script>
+    // Simulated voice recognition start/stop on hold
+    startBtn.addEventListener('mousedown', () => {
+      status.textContent = 'Listening...';
+      startBtn.setAttribute('aria-pressed', 'true');
+    });
+
+    startBtn.addEventListener('mouseup', () => {
+      status.textContent = 'Processing...';
+      startBtn.setAttribute('aria-pressed', 'false');
+      setTimeout(() => {
+        status.textContent = 'Press & hold the button to speak';
+      }, 2500);
+    });
+
+    startBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      status.textContent = 'Listening...';
+      startBtn.setAttribute('aria-pressed', 'true');
+    }, {passive: false});
+
+    startBtn.addEventListener('touchend', () => {
+      status.textContent = 'Processing...';
+      startBtn.setAttribute('aria-pressed', 'false');
+      setTimeout(() => {
+        status.textContent = 'Press & hold the button to speak';
+      }, 2500);
+    });
+  </script>
 </body>
 </html>
