@@ -5,125 +5,120 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Voice Search</title>
 <style>
-  /* Reset and base */
-  *, *::before, *::after {box-sizing: border-box;}
-  body {
-    margin: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #0f0f1a;
-    color: #f0f0f5;
-    transition: background-color 0.4s ease, color 0.4s ease;
-  }
+  :root {
+  --bg-dark: #0d0d20;
+  --bg-light: #f2f2f2;
+  --text-dark: #f2f2f2;
+  --text-light: #1c1c1c;
+  --accent: #00ffd5;
+  --button-glow: 0 0 20px var(--accent), inset 0 0 30px var(--accent);
+}
 
-  body.light {
-    background: #f5f5f7;
-    color: #111;
-  }
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
 
-  h1 {
-    font-weight: 900;
-    font-size: 3rem;
-    letter-spacing: 2px;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-    color: #00ffff;
-    text-shadow: 0 0 8px #00ffff;
-  }
+body.light {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+}
 
-  #status {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
-    min-height: 2rem;
-    font-weight: 600;
-  }
+h1 {
+  font-size: 3rem;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent);
+  letter-spacing: 2px;
+}
 
-  button#startBtn {
-    background: linear-gradient(135deg, #00f0ff, #00a8ff);
-    border: none;
-    border-radius: 50%;
-    width: 130px;
-    height: 130px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #0f0f1a;
-    cursor: pointer;
-    box-shadow:
-      0 0 20px #00ffff,
-      inset 0 0 40px #00ffff;
-    transition: background 0.3s ease, transform 0.15s ease;
-    user-select: none;
-  }
-  button#startBtn:active {
-    transform: scale(0.9);
-    box-shadow:
-      0 0 30px #00ffff,
-      inset 0 0 60px #00ffff;
-  }
+#status {
+  font-size: 1.2rem;
+  margin: 1rem 0;
+  font-weight: 500;
+}
 
-  /* Toggle switch */
-  .toggle-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+button#startBtn {
+  background: transparent;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  border-radius: 50%;
+  width: 140px;
+  height: 140px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: var(--button-glow);
+  transition: all 0.3s ease;
+}
 
-  .toggle-container label {
-    cursor: pointer;
-    font-weight: 600;
-    user-select: none;
-    color: inherit;
-  }
+button#startBtn:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 40px var(--accent), inset 0 0 40px var(--accent);
+}
 
-  .toggle-switch {
-    position: relative;
-    width: 50px;
-    height: 26px;
-  }
+/* Toggle switch styles */
+.toggle-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-  .toggle-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
+.toggle-container label {
+  font-weight: bold;
+  cursor: pointer;
+  color: inherit;
+}
 
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    background-color: #888;
-    border-radius: 34px;
-    top: 0; left: 0; right: 0; bottom: 0;
-    transition: background-color 0.4s;
-  }
+.toggle-switch {
+  position: relative;
+  width: 50px;
+  height: 26px;
+}
 
-  .slider::before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 3px;
-    bottom: 3px;
-    background-color: #fff;
-    border-radius: 50%;
-    transition: transform 0.4s;
-  }
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 
-  input:checked + .slider {
-    background-color: #00f0ff;
-    box-shadow: 0 0 8px #00f0ff;
-  }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #666;
+  border-radius: 34px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: background-color 0.4s;
+}
 
-  input:checked + .slider::before {
-    transform: translateX(24px);
-  }
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: transform 0.4s;
+}
 
-  /* Responsive */
-  @media (max-width: 400px) {
-    h1 { font-size: 2rem; }
-    button#startBtn { width: 100px; height: 100px; font-size: 1rem; }
-  }
+input:checked + .slider {
+  background-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+input:checked + .slider::before {
+  transform: translateX(24px);
+}
+
 </style>
 </head>
 <body>
