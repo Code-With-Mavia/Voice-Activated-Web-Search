@@ -6,26 +6,31 @@
 <title>Voice Search</title>
 <style>
   :root {
-    --bg-dark: #1e1e2f;
-    --bg-light: #ffffff;
-    --text-dark: #dcdce6;
-    --text-light: #2c3e50;
-    --accent: #ff6f61;
-    --button-glow: 0 0 15px var(--accent), inset 0 0 20px var(--accent);
+    --bg-dark: #121212;
+    --bg-light: #fefefe;
+    --text-dark: #e0e0e0;
+    --text-light: #222222;
+    --accent: #1e90ff; /* Dodger Blue */
+    --button-bg: var(--accent);
+    --button-hover-bg: #1c7ed6;
+  }
+
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
   }
 
   body {
+    margin: 0;
+    padding: 3rem 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-dark);
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    margin: 0;
-    padding: 3rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     min-height: 100vh;
-    transition: background-color 0.5s ease, color 0.5s ease;
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 
   body.light {
@@ -34,68 +39,68 @@
   }
 
   h1 {
-    font-size: 3.5rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
     color: var(--accent);
-    margin-bottom: 2rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    font-family: 'Arial Black', Gadget, sans-serif;
-  }
-
-  #status {
-    font-size: 1.3rem;
-    margin-bottom: 2.5rem;
-    font-weight: 600;
-    max-width: 360px;
-    text-align: center;
-    font-style: italic;
-  }
-
-  button#startBtn {
-    background-color: var(--accent);
-    border: none;
-    border-radius: 12px;
-    width: 160px;
-    height: 60px;
-    color: white;
-    font-size: 1.2rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: var(--button-glow);
-    transition: background-color 0.3s ease, transform 0.2s ease;
     user-select: none;
   }
 
-  button#startBtn:active {
-    transform: scale(0.95);
-    box-shadow: 0 0 30px var(--accent), inset 0 0 30px var(--accent);
+  #status {
+    font-size: 1.25rem;
+    margin-bottom: 3rem;
+    font-weight: 500;
+    font-style: italic;
+    max-width: 320px;
+    text-align: center;
   }
 
-  /* Toggle switch container */
+  button#startBtn {
+    background-color: var(--button-bg);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 1rem 2.5rem;
+    cursor: pointer;
+    box-shadow: 0 0 12px var(--accent);
+    user-select: none;
+    transition: background-color 0.3s ease, transform 0.15s ease;
+  }
+
+  button#startBtn:active {
+    background-color: var(--button-hover-bg);
+    transform: scale(0.95);
+  }
+
+  /* Toggle container fixed top-right */
   .toggle-container {
     position: fixed;
     top: 20px;
     right: 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    user-select: none;
+    z-index: 1000;
+  }
+
+  /* Label text is NOT clickable */
+  .toggle-container label {
+    font-weight: 600;
+    font-size: 1rem;
+    color: inherit;
+    pointer-events: none; /* Disable clicking on label */
     user-select: none;
   }
 
-  /* Label is not clickable */
-  .toggle-container label {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: inherit;
-    pointer-events: none; /* Disable clicking on label */
-  }
-
-  /* Toggle switch styles */
+  /* Toggle switch */
   .toggle-switch {
     position: relative;
-    width: 52px;
-    height: 28px;
+    width: 50px;
+    height: 26px;
   }
 
   .toggle-switch input {
@@ -107,8 +112,8 @@
   .slider {
     position: absolute;
     cursor: pointer;
-    background-color: #ccc;
-    border-radius: 34px;
+    background-color: #bbb;
+    border-radius: 26px;
     top: 0;
     left: 0;
     right: 0;
@@ -117,21 +122,21 @@
   }
 
   .slider::before {
-    position: absolute;
     content: "";
+    position: absolute;
     height: 22px;
     width: 22px;
-    left: 3px;
-    bottom: 3px;
+    left: 2px;
+    bottom: 2px;
     background-color: white;
     border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     transition: transform 0.4s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
 
   input:checked + .slider {
     background-color: var(--accent);
-    box-shadow: 0 0 10px var(--accent);
+    box-shadow: 0 0 8px var(--accent);
   }
 
   input:checked + .slider::before {
@@ -159,7 +164,7 @@
   const status = document.getElementById('status');
   const startBtn = document.getElementById('startBtn');
 
-  // Initialize label text and body class on page load
+  // Update mode label and body class on toggle
   function updateMode() {
     if (modeToggle.checked) {
       modeLabel.textContent = 'Dark Mode';
