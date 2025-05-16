@@ -3,81 +3,125 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Voice Search Interface</title>
+<title>Futuristic Voice Search</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&display=swap');
 
   :root {
-    --bg-light: #0f0f1a;
-    --text-light: #00fff7;
-    --bg-dark: #121212;
-    --text-dark: #00fff7;
-    --neon-blue: #00fff7;
-    --neon-pink: #ff00d4;
+    --neon-blue: #00f0ff;
+    --neon-pink: #ff4cdb;
     --neon-green: #39ff14;
+    --bg-light: #e0f7fa;
+    --bg-dark: #0a0a13;
+    --glass-bg-light: rgba(255, 255, 255, 0.15);
+    --glass-bg-dark: rgba(15, 15, 23, 0.65);
+  }
+
+  * {
+    box-sizing: border-box;
   }
 
   body {
     margin: 0;
-    font-family: 'Orbitron', monospace;
-    background-color: var(--bg-light);
-    color: var(--text-light);
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg-light);
+    color: #111;
+    min-height: 100vh;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    height: 100vh;
-    transition: background-color 0.5s ease, color 0.5s ease;
+    align-items: center;
+    transition: background 0.5s ease, color 0.5s ease;
+  }
+
+  body.dark {
+    background: var(--bg-dark);
+    color: #eee;
   }
 
   .container {
-    border: 2px solid var(--neon-blue);
-    padding: 2rem 3rem;
-    border-radius: 15px;
-    box-shadow:
-      0 0 10px var(--neon-blue),
-      0 0 40px var(--neon-blue),
-      inset 0 0 10px var(--neon-blue);
-    text-align: center;
+    background: var(--glass-bg-light);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 25px;
+    border: 2px solid transparent;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    padding: 3rem 4rem;
     max-width: 400px;
+    text-align: center;
+    position: relative;
+    transition: background 0.5s ease, border-color 0.5s ease;
+  }
+
+  body.dark .container {
+    background: var(--glass-bg-dark);
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 25px var(--neon-pink);
   }
 
   h1 {
-    font-weight: 500;
-    font-size: 2.5rem;
+    font-weight: 700;
+    font-size: 3rem;
     margin-bottom: 1rem;
-    text-shadow: 0 0 10px var(--neon-pink);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   #status {
-    font-size: 1.2rem;
-    margin: 1rem 0 2rem;
+    font-size: 1.25rem;
+    margin: 1.5rem 0 3rem;
     color: var(--neon-green);
+    font-weight: 600;
     text-shadow: 0 0 8px var(--neon-green);
+    min-height: 1.5em;
   }
 
   button {
-    background: none;
-    border: 2px solid var(--neon-pink);
-    color: var(--neon-pink);
-    padding: 0.7rem 1.8rem;
-    font-size: 1.1rem;
-    border-radius: 12px;
+    background: transparent;
+    border: 3px solid var(--neon-blue);
+    padding: 0.75rem 2rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--neon-blue);
     cursor: pointer;
+    border-radius: 50px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    box-shadow:
-      0 0 5px var(--neon-pink),
-      0 0 20px var(--neon-pink);
+    box-shadow: 0 0 15px var(--neon-blue);
     transition: all 0.3s ease;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
   }
 
-  button:hover {
-    background-color: var(--neon-pink);
-    color: #121212;
-    box-shadow:
-      0 0 15px var(--neon-pink),
-      0 0 40px var(--neon-pink);
+  button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    background: var(--neon-pink);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.4s ease;
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0.7;
+  }
+
+  button:hover::before,
+  button:focus::before {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  button:hover,
+  button:focus {
+    color: #111;
+    box-shadow: 0 0 30px var(--neon-pink);
+    border-color: var(--neon-pink);
+    outline: none;
   }
 
   .toggle-container {
@@ -87,90 +131,65 @@
   }
 
   .toggle-button {
-    background: none;
-    border: 2px solid var(--neon-blue);
-    border-radius: 20px;
     width: 60px;
-    height: 30px;
-    position: relative;
+    height: 32px;
+    border-radius: 50px;
+    background: var(--neon-blue);
+    box-shadow: 0 0 12px var(--neon-blue);
     cursor: pointer;
-    box-shadow:
-      0 0 10px var(--neon-blue),
-      inset 0 0 10px var(--neon-blue);
+    position: relative;
+    transition: background 0.5s ease;
+  }
+
+  body.dark .toggle-button {
+    background: var(--neon-pink);
+    box-shadow: 0 0 18px var(--neon-pink);
   }
 
   .toggle-circle {
     position: absolute;
     top: 3px;
     left: 3px;
-    width: 24px;
-    height: 24px;
-    background-color: var(--neon-blue);
+    width: 26px;
+    height: 26px;
+    background: #111;
     border-radius: 50%;
-    transition: left 0.3s ease;
-  }
-
-  body.dark {
-    background-color: var(--bg-dark);
-    color: var(--text-dark);
-  }
-
-  body.dark .container {
-    border-color: var(--neon-pink);
-    box-shadow:
-      0 0 10px var(--neon-pink),
-      0 0 40px var(--neon-pink),
-      inset 0 0 10px var(--neon-pink);
-  }
-
-  body.dark h1 {
-    text-shadow: 0 0 10px var(--neon-blue);
-  }
-
-  body.dark #status {
-    color: var(--neon-pink);
-    text-shadow: 0 0 8px var(--neon-pink);
-  }
-
-  body.dark button {
-    border-color: var(--neon-blue);
-    color: var(--neon-blue);
-    box-shadow:
-      0 0 5px var(--neon-blue),
-      0 0 20px var(--neon-blue);
-  }
-
-  body.dark button:hover {
-    background-color: var(--neon-blue);
-    color: var(--bg-dark);
-    box-shadow:
-      0 0 15px var(--neon-blue),
-      0 0 40px var(--neon-blue);
-  }
-
-  body.dark .toggle-button {
-    border-color: var(--neon-pink);
-    box-shadow:
-      0 0 10px var(--neon-pink),
-      inset 0 0 10px var(--neon-pink);
+    transition: left 0.4s ease;
+    box-shadow: 0 0 6px #111;
   }
 
   body.dark .toggle-circle {
-    left: 33px;
-    background-color: var(--neon-pink);
+    left: 31px;
+  }
+
+  @media (max-width: 450px) {
+    .container {
+      padding: 2rem 2rem;
+      max-width: 90vw;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+    }
+
+    button {
+      font-size: 1rem;
+      padding: 0.6rem 1.5rem;
+    }
   }
 </style>
 </head>
 <body>
-  <div class="toggle-container">
-    <div class="toggle-button" id="modeToggle" aria-label="Toggle dark/light mode" role="button" tabindex="0">
+  <div class="toggle-container" role="button" tabindex="0" aria-label="Toggle dark/light mode" id="modeToggle">
+    <div class="toggle-button">
       <div class="toggle-circle"></div>
     </div>
   </div>
-  <div class="container">
+
+  <div class="container" role="main">
     <h1>Voice Search</h1>
-    <div id="status">Press the button and speak</div>
-    <button id="startBtn">Start Listening</button>
+    <div id="status" aria-live="polite">Press the button and speak</div>
+    <button id="startBtn" aria-pressed="false" aria-label="Start voice recognition">Start Listening</button>
   </div>
 
 <script>
@@ -179,7 +198,8 @@
     document.body.classList.toggle('dark');
   });
   modeToggle.addEventListener('keypress', (e) => {
-    if(e.key === 'Enter' || e.key === ' ') {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
       document.body.classList.toggle('dark');
     }
   });
@@ -187,9 +207,9 @@
   const statusEl = document.getElementById('status');
   const startBtn = document.getElementById('startBtn');
 
-  // Placeholder for integration with speech recognition
   startBtn.addEventListener('click', () => {
-    statusEl.textContent = "Listening... (This is a demo interface)";
+    statusEl.textContent = "Listening... (Demo mode)";
+    startBtn.setAttribute('aria-pressed', 'true');
   });
 </script>
 </body>
