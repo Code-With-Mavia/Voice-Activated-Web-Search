@@ -5,180 +5,126 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Voice Search</title>
 <style>
+  /* Base styles */
   :root {
-    --bg-dark: #121212;
-    --bg-light: #fefefe;
-    --text-dark: #e0e0e0;
-    --text-light: #222222;
-    --accent: #1e90ff; /* Dodger Blue */
-    --button-bg: var(--accent);
-    --button-hover-bg: #1c7ed6;
-  }
-
-  /* Reset and base */
-  * {
-    box-sizing: border-box;
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --accent-color: #1e90ff;
+    --button-bg: var(--accent-color);
+    --button-hover-bg: #187bcd;
   }
 
   body {
     margin: 0;
-    padding: 3rem 2rem;
+    padding: 4rem 2rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-dark);
-    color: var(--text-dark);
+    background-color: var(--bg-color);
+    color: var(--text-color);
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    transition: background-color 0.4s ease, color 0.4s ease;
-  }
-
-  body.light {
-    background-color: var(--bg-light);
-    color: var(--text-light);
+    transition: background-color 0.8s ease, color 0.8s ease;
   }
 
   h1 {
-    font-size: 3rem;
-    margin-bottom: 1.5rem;
-    color: var(--accent);
-    letter-spacing: 0.12em;
+    font-size: 3.5rem;
+    margin-bottom: 2rem;
+    color: var(--accent-color);
+    letter-spacing: 0.15em;
     text-transform: uppercase;
     user-select: none;
   }
 
   #status {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     margin-bottom: 3rem;
     font-weight: 500;
     font-style: italic;
-    max-width: 320px;
+    max-width: 360px;
     text-align: center;
+    color: var(--text-color);
   }
 
   button#startBtn {
     background-color: var(--button-bg);
     border: none;
-    border-radius: 12px;
+    border-radius: 14px;
     color: white;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 700;
-    padding: 1rem 2.5rem;
+    padding: 1rem 3rem;
     cursor: pointer;
-    box-shadow: 0 0 12px var(--accent);
+    box-shadow: 0 0 15px var(--accent-color);
     user-select: none;
-    transition: background-color 0.3s ease, transform 0.15s ease;
+    transition: background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease;
+  }
+
+  button#startBtn:hover {
+    background-color: var(--button-hover-bg);
+    box-shadow: 0 0 25px var(--accent-color);
   }
 
   button#startBtn:active {
-    background-color: var(--button-hover-bg);
     transform: scale(0.95);
   }
 
-  /* Toggle container fixed top-right */
-  .toggle-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    user-select: none;
-    z-index: 1000;
-  }
+  /* Responsive */
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 2.5rem;
+    }
 
-  /* Label text is NOT clickable */
-  .toggle-container label {
-    font-weight: 600;
-    font-size: 1rem;
-    color: inherit;
-    pointer-events: none; /* Disable clicking on label */
-    user-select: none;
-  }
-
-  /* Toggle switch */
-  .toggle-switch {
-    position: relative;
-    width: 50px;
-    height: 26px;
-  }
-
-  .toggle-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    background-color: #bbb;
-    border-radius: 26px;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    transition: background-color 0.4s;
-  }
-
-  .slider::before {
-    content: "";
-    position: absolute;
-    height: 22px;
-    width: 22px;
-    left: 2px;
-    bottom: 2px;
-    background-color: white;
-    border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: transform 0.4s;
-  }
-
-  input:checked + .slider {
-    background-color: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-  }
-
-  input:checked + .slider::before {
-    transform: translateX(24px);
+    button#startBtn {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.2rem;
+    }
   }
 </style>
 </head>
 <body>
-  <div class="toggle-container">
-    <label id="modeLabel">Dark Mode</label>
-    <div class="toggle-switch">
-      <input type="checkbox" id="modeToggle" checked />
-      <span class="slider"></span>
-    </div>
-  </div>
-
   <h1>Voice Search</h1>
   <div id="status">Press &amp; hold the button to speak</div>
   <button id="startBtn" aria-pressed="false" aria-label="Press and hold to speak">Hold to Speak</button>
 
 <script>
-  const modeToggle = document.getElementById('modeToggle');
-  const modeLabel = document.getElementById('modeLabel');
-  const body = document.body;
-  const status = document.getElementById('status');
-  const startBtn = document.getElementById('startBtn');
+  // Professional color palettes (background, text, accent)
+  const palettes = [
+    { bg: '#1f2937', text: '#f9fafb', accent: '#3b82f6' }, // cool blue slate
+    { bg: '#111827', text: '#e0e7ff', accent: '#6366f1' }, // indigo night
+    { bg: '#0f172a', text: '#f1f5f9', accent: '#22d3ee' }, // cyan dark
+    { bg: '#2d2d34', text: '#f0f0f5', accent: '#f97316' }, // warm orange
+    { bg: '#20232a', text: '#61dafb', accent: '#21a179' }, // teal & blue
+    { bg: '#121212', text: '#e0e0e0', accent: '#ff6f61' }, // dark coral
+    { bg: '#222831', text: '#eeeeee', accent: '#00adb5' }, // dark cyan
+  ];
 
-  // Update mode label and body class on toggle
-  function updateMode() {
-    if (modeToggle.checked) {
-      modeLabel.textContent = 'Dark Mode';
-      body.classList.remove('light');
-    } else {
-      modeLabel.textContent = 'Light Mode';
-      body.classList.add('light');
-    }
+  // Pick a random palette on load
+  const palette = palettes[Math.floor(Math.random() * palettes.length)];
+
+  // Apply colors to CSS variables
+  document.documentElement.style.setProperty('--bg-color', palette.bg);
+  document.documentElement.style.setProperty('--text-color', palette.text);
+  document.documentElement.style.setProperty('--accent-color', palette.accent);
+  document.documentElement.style.setProperty('--button-bg', palette.accent);
+  // Slightly darker button hover color (20% darker)
+  function darkenColor(hex, percent) {
+    const num = parseInt(hex.replace('#',''),16);
+    const amt = Math.round(2.55 * percent);
+    let R = (num >> 16) - amt;
+    let G = (num >> 8 & 0x00FF) - amt;
+    let B = (num & 0x0000FF) - amt;
+    R = R < 0 ? 0 : R;
+    G = G < 0 ? 0 : G;
+    B = B < 0 ? 0 : B;
+    return `#${(R.toString(16).padStart(2,'0'))}${(G.toString(16).padStart(2,'0'))}${(B.toString(16).padStart(2,'0'))}`;
   }
-
-  modeToggle.addEventListener('change', updateMode);
-  updateMode();
+  document.documentElement.style.setProperty('--button-hover-bg', darkenColor(palette.accent, 20));
 
   // Speech recognition setup
+  const startBtn = document.getElementById('startBtn');
+  const status = document.getElementById('status');
   let recognition;
   let recognizing = false;
 
