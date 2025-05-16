@@ -173,7 +173,7 @@
     };
 
     recognition.onerror = (event) => {
-      status.textContent = `Error: ${event.error}`;
+      status.textContent = Error: ${event.error};
       recognizing = false;
       startBtn.setAttribute('aria-pressed', 'false');
     };
@@ -186,11 +186,11 @@
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript.toLowerCase();
-      status.textContent = `You said: "${transcript}"`;
+      status.textContent = You said: "${transcript}";
       if (transcript.includes('search')) {
         const query = transcript.split('search').pop().trim();
         if (query) {
-          const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+          const url = https://www.google.com/search?q=${encodeURIComponent(query)};
           window.open(url, '_blank');
         } else {
           status.textContent = 'Say "search" followed by your query.';
