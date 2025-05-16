@@ -6,26 +6,26 @@
 <title>Voice Search</title>
 <style>
   :root {
-    /* Updated color palette */
-    --bg-dark: #121a2b;           /* Dark navy */
-    --bg-light: #f5f7fa;          /* Light grayish blue */
-    --text-dark: #e0e6f1;         /* Light gray */
-    --text-light: #2c3e50;        /* Dark slate */
-    --accent: #4a90e2;            /* Soft blue */
-    --button-glow: 0 0 20px var(--accent), inset 0 0 30px var(--accent);
+    --bg-dark: #1e1e2f;
+    --bg-light: #ffffff;
+    --text-dark: #dcdce6;
+    --text-light: #2c3e50;
+    --accent: #ff6f61;
+    --button-glow: 0 0 15px var(--accent), inset 0 0 20px var(--accent);
   }
 
   body {
     background-color: var(--bg-dark);
     color: var(--text-dark);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    transition: background-color 0.4s ease, color 0.4s ease;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 0;
-    padding: 2rem;
+    padding: 3rem;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     min-height: 100vh;
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
 
   body.light {
@@ -34,63 +34,68 @@
   }
 
   h1 {
-    font-size: 3rem;
-    text-transform: uppercase;
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
     color: var(--accent);
-    text-shadow: 0 0 8px var(--accent);
-    letter-spacing: 2px;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    font-family: 'Arial Black', Gadget, sans-serif;
   }
 
   #status {
-    font-size: 1.2rem;
-    margin: 1rem 0 2rem 0;
-    font-weight: 500;
+    font-size: 1.3rem;
+    margin-bottom: 2.5rem;
+    font-weight: 600;
+    max-width: 360px;
     text-align: center;
-    max-width: 320px;
+    font-style: italic;
   }
 
   button#startBtn {
-    background: transparent;
-    border: 3px solid var(--accent);
-    color: var(--accent);
-    border-radius: 50%;
-    width: 140px;
-    height: 140px;
-    font-weight: bold;
-    font-size: 1.1rem;
+    background-color: var(--accent);
+    border: none;
+    border-radius: 12px;
+    width: 160px;
+    height: 60px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
     cursor: pointer;
     box-shadow: var(--button-glow);
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
     user-select: none;
   }
 
   button#startBtn:active {
     transform: scale(0.95);
-    box-shadow: 0 0 40px var(--accent), inset 0 0 40px var(--accent);
+    box-shadow: 0 0 30px var(--accent), inset 0 0 30px var(--accent);
   }
 
-  /* Toggle switch styles */
+  /* Toggle switch container */
   .toggle-container {
     position: fixed;
     top: 20px;
     right: 20px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     user-select: none;
   }
 
+  /* Label is not clickable */
   .toggle-container label {
-    font-weight: bold;
-    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.1rem;
     color: inherit;
+    pointer-events: none; /* Disable clicking on label */
   }
 
+  /* Toggle switch styles */
   .toggle-switch {
     position: relative;
-    width: 50px;
-    height: 26px;
+    width: 52px;
+    height: 28px;
   }
 
   .toggle-switch input {
@@ -102,7 +107,7 @@
   .slider {
     position: absolute;
     cursor: pointer;
-    background-color: #888;
+    background-color: #ccc;
     border-radius: 34px;
     top: 0;
     left: 0;
@@ -114,18 +119,19 @@
   .slider::before {
     position: absolute;
     content: "";
-    height: 20px;
-    width: 20px;
+    height: 22px;
+    width: 22px;
     left: 3px;
     bottom: 3px;
-    background-color: #fff;
+    background-color: white;
     border-radius: 50%;
     transition: transform 0.4s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
 
   input:checked + .slider {
     background-color: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
+    box-shadow: 0 0 10px var(--accent);
   }
 
   input:checked + .slider::before {
@@ -135,7 +141,7 @@
 </head>
 <body>
   <div class="toggle-container">
-    <label for="modeToggle">Dark Mode</label>
+    <label id="modeLabel">Dark Mode</label>
     <div class="toggle-switch">
       <input type="checkbox" id="modeToggle" checked />
       <span class="slider"></span>
@@ -147,28 +153,27 @@
   <button id="startBtn" aria-pressed="false" aria-label="Press and hold to speak">Hold to Speak</button>
 
 <script>
-  // Dark/light mode toggle
   const modeToggle = document.getElementById('modeToggle');
+  const modeLabel = document.getElementById('modeLabel');
   const body = document.body;
+  const status = document.getElementById('status');
+  const startBtn = document.getElementById('startBtn');
 
-  // Initialize with dark mode on by default
-  if (modeToggle.checked) {
-    body.classList.remove('light');
-  } else {
-    body.classList.add('light');
-  }
-
-  modeToggle.addEventListener('change', () => {
+  // Initialize label text and body class on page load
+  function updateMode() {
     if (modeToggle.checked) {
+      modeLabel.textContent = 'Dark Mode';
       body.classList.remove('light');
     } else {
+      modeLabel.textContent = 'Light Mode';
       body.classList.add('light');
     }
-  });
+  }
+
+  modeToggle.addEventListener('change', updateMode);
+  updateMode();
 
   // Speech recognition setup
-  const startBtn = document.getElementById('startBtn');
-  const status = document.getElementById('status');
   let recognition;
   let recognizing = false;
 
