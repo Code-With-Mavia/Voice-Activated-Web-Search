@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Voice Search</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+  /* Background gradient: deep purple to pink */
+  body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    overflow: hidden;
+  }
+
+  h1 {
+    font-weight: 600;
+    font-size: 4rem;
+    letter-spacing: 4px;
+    margin: 0 0 1rem 0;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  button {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    border: none;
+    border-radius: 50px;
+    box-shadow:
+      0 4px 15px rgba(255, 75, 43, 0.6),
+      0 0 20px #ff4b2b,
+      0 0 40px #ff416c;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 18px 60px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  button:hover {
+    box-shadow:
+      0 6px 25px rgba(255, 75, 43, 0.9),
+      0 0 30px #ff4b2b,
+      0 0 60px #ff416c;
+    transform: scale(1.05);
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  /* Glowing pulse animation around mic */
+  .mic-icon {
+    width: 28px;
+    height: 28px;
+    stroke: white;
+    stroke-width: 2.5;
+    fill: none;
+    animation: pulseGlow 2s infinite ease-in-out;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% {
+      stroke-opacity: 1;
+      transform: scale(1);
+      filter: drop-shadow(0 0 4px #ff4b2b);
+    }
+    50% {
+      stroke-opacity: 0.6;
+      transform: scale(1.2);
+      filter: drop-shadow(0 0 12px #ff416c);
+    }
+  }
+
+  #status {
+    margin-top: 2rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-shadow: 0 0 12px rgba(255,75,43,0.7);
+    min-height: 1.5em;
+    max-width: 80vw;
+  }
+
+  /* Subtle background wave animation behind button */
+  body::before {
+    content: '';
+    position: absolute;
+    width: 300vw;
+    height: 300vw;
+    background:
+      radial-gradient(circle at center, rgba(255, 75, 43, 0.25), transparent 60%);
+    animation: rotateBG 20s linear infinite;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes rotateBG {
+    0% { transform: translate(-50%, -50%) rotate(0deg);}
+    100% { transform: translate(-50%, -50%) rotate(360deg);}
+  }
+
+  /* Keep content on top */
+  main {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  /* Responsive scaling */
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+    }
+    button {
+      font-size: 1.1rem;
+      padding: 14px 40px;
+      gap: 10px;
+    }
+    .mic-icon {
+      width: 22px;
+      height: 22px;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>VOICE SEARCH</h1>
+  <button id="start-btn" aria-label="Start Voice Search">
+    <svg class="mic-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <rect x="9" y="2" width="6" height="11" rx="3" ry="3"/>
+      <line x1="12" y1="17" x2="12" y2="22" />
+      <line x1="8" y1="22" x2="16" y2="22" />
+    </svg>
+    LISTEN
+  </button>
+  <p id="status">Tap the button & say "Search [your query]"</p>
+</main>
+
+<script>
+  const startBtn = document.getElementById('start-btn');
+  const status = document.getElementById('status');
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    status.textContent = 'Browser does not support Speech Recognition.';
+    startBtn.disabled = true;
+  } else {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    startBtn.onclick = () => {
+      status.textContent = 'Listening... say "Search [your query]"';
+      recognition.start();
+      startBtn.disabled = true;
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript.toLowerCase();
+      status.textContent = `You said: "${transcript}"`;
+
+      if (transcript.includes('search')) {
+        const searchQuery = transcript.split('search').pop().trim();
+        if (searchQuery.length > 0) {
+          const encodedQuery = encodeURIComponent(searchQuery);
+          const url = `https://www.google.com/search?q=${encodedQuery}`;
+          status.textContent = `Searching Google for: "${searchQuery}"`;
+          window.open(url, '_blank');
+        } else {
+          status.textContent = 'No query detected after "search". Please try again.';
+        }
+      } else {
+        status.textContent = 'Please say a command starting with "search".';
+      }
+      startBtn.disabled = false;
+    };
+
+    recognition.onerror = (event) => {
+      status.textContent = `Error: ${event.error}`;
+      startBtn.disabled = false;
+    };
+
+    recognition.onend = () => {
+      startBtn.disabled = false;
+    };
+  }
+</script>
+</body>
+</html>
