@@ -3,87 +3,98 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lucid Voice Search</title>
+  <title>Voice Command Interface</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
     body {
-      background: linear-gradient(to bottom, #0f1115, #1b1e24);
-      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f0f0f;
+      font-family: 'Inter', sans-serif;
     }
-
-    .glass {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+    .glass-panel {
+      background: rgba(30, 30, 30, 0.7);
+      border: 1px solid #2f2f2f;
+      backdrop-filter: blur(10px);
     }
-
-    .mic-glow {
-      box-shadow: 0 0 20px rgba(94, 234, 212, 0.6);
+    .mic-btn {
+      transition: background 0.2s ease;
     }
-
-    .typing::after {
-      content: '|';
-      animation: blink 0.8s infinite;
-    }
-
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      50.1%, 100% { opacity: 0; }
+    .mic-btn:hover {
+      background-color: #1e40af;
     }
   </style>
 </head>
-<body class="flex items-center justify-center min-h-screen text-white">
+<body class="flex items-center justify-center h-screen text-gray-200">
 
-  <div class="glass p-8 rounded-xl w-full max-w-md text-center space-y-6 shadow-xl">
-    <h1 class="text-3xl font-bold text-cyan-300">Lucid Voice Search</h1>
-    <p id="status" class="text-gray-400 typing">Tap mic and say something like “Search Python tutorials”</p>
+  <main class="glass-panel w-full max-w-xl p-8 rounded-lg shadow-lg space-y-6">
+    <h1 class="text-2xl font-semibold text-blue-400 border-b border-gray-700 pb-2">
+      Voice Command Interface
+    </h1>
 
-    <button id="micBtn" class="w-16 h-16 rounded-full bg-cyan-400 text-white text-2xl mic-glow hover:scale-105 transition">🎤</button>
-  </div>
+    <div class="space-y-3">
+      <p id="instruction" class="text-sm text-gray-400">
+        Click the mic and say: <span class="text-blue-300">"Search Django tutorials"</span>
+      </p>
+      <div class="bg-gray-900 p-4 rounded text-sm text-gray-300 min-h-[3rem]" id="output">
+        Awaiting input...
+      </div>
+    </div>
+
+    <div class="flex justify-center">
+      <button id="micBtn"
+        class="mic-btn px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700">
+        Activate Mic
+      </button>
+    </div>
+  </main>
 
   <script>
-    const micBtn = document.getElementById("micBtn");
-    const status = document.getElementById("status");
-    let recognition;
-
-    function update(text, typing = true) {
-      status.classList.remove("typing");
-      status.textContent = text;
-      if (typing) status.classList.add("typing");
-    }
+    const micBtn = document.getElementById('micBtn');
+    const output = document.getElementById('output');
+    const instruction = document.getElementById('instruction');
 
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SpeechRecognition();
+      const recognition = new SpeechRecognition();
       recognition.lang = 'en-US';
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
 
-      recognition.onstart = () => update("🎧 Listening...");
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript.toLowerCase();
-        update(`🗣 You said: "${transcript}"`, false);
+      recognition.onstart = () => {
+        output.textContent = "Listening...";
+      };
 
-        if (transcript.includes("search")) {
-          const query = transcript.replace("search", "").trim();
-          if (query) {
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        output.textContent = `You said: "${transcript}"`;
+
+        const lower = transcript.toLowerCase();
+        if (lower.includes('search')) {
+          const query = lower.replace('search', '').trim();
+          if (query.length > 0) {
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
           } else {
-            update("Say: 'Search' followed by your topic");
+            output.textContent = 'Please say a query after "search".';
           }
+        } else {
+          output.textContent = 'Command not recognized. Try starting with "Search".';
         }
       };
 
-      recognition.onerror = (e) => update("Error: " + e.error, false);
-      recognition.onend = () => update("✅ Tap mic and say: 'Search X'", true);
-    } else {
-      update("❌ Speech recognition not supported", false);
-    }
+      recognition.onerror = (event) => {
+        output.textContent = `Error: ${event.error}`;
+      };
 
-    micBtn.addEventListener("click", () => {
-      if (recognition) recognition.start();
-    });
+      recognition.onend = () => {
+        instruction.textContent = 'Click the mic and say: "Search Django tutorials"';
+      };
+
+      micBtn.addEventListener('click', () => {
+        recognition.start();
+      });
+    } else {
+      output.textContent = "Your browser does not support Speech Recognition.";
+      micBtn.disabled = true;
+    }
   </script>
 </body>
 </html>
