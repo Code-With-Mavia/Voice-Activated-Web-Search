@@ -3,98 +3,135 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Voice Command Interface</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>AI Voice Console</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      background-color: #0f0f0f;
-      font-family: 'Inter', sans-serif;
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: 'Fira Code', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
-    .glass-panel {
-      background: rgba(30, 30, 30, 0.7);
-      border: 1px solid #2f2f2f;
-      backdrop-filter: blur(10px);
+
+    .console-container {
+      width: 90%;
+      max-width: 720px;
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
     }
-    .mic-btn {
-      transition: background 0.2s ease;
+
+    .console-header {
+      font-size: 1rem;
+      color: #58a6ff;
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
     }
-    .mic-btn:hover {
-      background-color: #1e40af;
+
+    .output {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      min-height: 80px;
+      white-space: pre-wrap;
+      background: #0d1117;
+      padding: 12px;
+      border: 1px solid #21262d;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background-color: #238636;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #2ea043;
+    }
+
+    .status-bar {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #8b949e;
     }
   </style>
 </head>
-<body class="flex items-center justify-center h-screen text-gray-200">
+<body>
 
-  <main class="glass-panel w-full max-w-xl p-8 rounded-lg shadow-lg space-y-6">
-    <h1 class="text-2xl font-semibold text-blue-400 border-b border-gray-700 pb-2">
-      Voice Command Interface
-    </h1>
+  <div class="console-container">
+    <div class="console-header">[ AI Voice Console ]</div>
 
-    <div class="space-y-3">
-      <p id="instruction" class="text-sm text-gray-400">
-        Click the mic and say: <span class="text-blue-300">"Search Django tutorials"</span>
-      </p>
-      <div class="bg-gray-900 p-4 rounded text-sm text-gray-300 min-h-[3rem]" id="output">
-        Awaiting input...
-      </div>
-    </div>
+    <div id="output" class="output">Awaiting voice command...</div>
 
-    <div class="flex justify-center">
-      <button id="micBtn"
-        class="mic-btn px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700">
-        Activate Mic
-      </button>
-    </div>
-  </main>
+    <button class="btn" id="startBtn">🎙 Start Listening</button>
+    <div class="status-bar" id="status">Ready</div>
+  </div>
 
   <script>
-    const micBtn = document.getElementById('micBtn');
     const output = document.getElementById('output');
-    const instruction = document.getElementById('instruction');
+    const startBtn = document.getElementById('startBtn');
+    const statusBar = document.getElementById('status');
 
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
       recognition.lang = 'en-US';
       recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
-        output.textContent = "Listening...";
+        statusBar.textContent = "Listening...";
       };
 
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
-        output.textContent = `You said: "${transcript}"`;
+        output.textContent = `> ${transcript}`;
 
-        const lower = transcript.toLowerCase();
-        if (lower.includes('search')) {
-          const query = lower.replace('search', '').trim();
-          if (query.length > 0) {
+        const command = transcript.toLowerCase();
+        if (command.startsWith("search")) {
+          const query = command.replace("search", "").trim();
+          if (query) {
+            statusBar.textContent = `Opening Google for "${query}"...`;
             window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
           } else {
-            output.textContent = 'Please say a query after "search".';
+            statusBar.textContent = "No query found after 'search'.";
           }
         } else {
-          output.textContent = 'Command not recognized. Try starting with "Search".';
+          statusBar.textContent = "Command not recognized. Try saying: 'Search Django'.";
         }
       };
 
       recognition.onerror = (event) => {
-        output.textContent = `Error: ${event.error}`;
+        statusBar.textContent = `Error: ${event.error}`;
       };
 
       recognition.onend = () => {
-        instruction.textContent = 'Click the mic and say: "Search Django tutorials"';
+        statusBar.textContent = "Idle";
       };
 
-      micBtn.addEventListener('click', () => {
+      startBtn.addEventListener('click', () => {
         recognition.start();
       });
     } else {
-      output.textContent = "Your browser does not support Speech Recognition.";
-      micBtn.disabled = true;
+      output.textContent = "Voice recognition not supported in this browser.";
+      startBtn.disabled = true;
     }
   </script>
+
 </body>
 </html>
