@@ -1,47 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Neon Voice Assistant</title>
-
-  <!-- Tailwind CSS CDN -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lucid Voice Search</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
     body {
-      background-color: #0f0f1b;
-      color: #00ffcc;
-      font-family: 'Courier New', monospace;
+      background: linear-gradient(to bottom, #0f1115, #1b1e24);
+      font-family: 'Segoe UI', sans-serif;
     }
 
-    .glow {
-      box-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc66;
-      transition: all 0.2s ease-in-out;
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .terminal-box {
-      border: 2px solid #00ffcc;
-      border-radius: 12px;
-      background-color: #0f0f1b;
-      padding: 2rem;
-      max-width: 600px;
-      margin: auto;
-      min-height: 250px;
-    }
-
-    .mic-btn {
-      border: 2px solid #00ffcc;
-      border-radius: 50%;
-      height: 80px;
-      width: 80px;
-      background-color: transparent;
-      color: #00ffcc;
-      font-size: 32px;
-    }
-
-    .mic-btn:hover {
-      background-color: #00ffcc11;
+    .mic-glow {
+      box-shadow: 0 0 20px rgba(94, 234, 212, 0.6);
     }
 
     .typing::after {
@@ -55,33 +33,24 @@
     }
   </style>
 </head>
-<body class="flex items-center justify-center min-h-screen">
+<body class="flex items-center justify-center min-h-screen text-white">
 
-  <div class="text-center">
-    <h1 class="text-3xl md:text-5xl font-bold mb-8 text-teal-400 uppercase tracking-widest">Neon Voice Console</h1>
+  <div class="glass p-8 rounded-xl w-full max-w-md text-center space-y-6 shadow-xl">
+    <h1 class="text-3xl font-bold text-cyan-300">Lucid Voice Search</h1>
+    <p id="status" class="text-gray-400 typing">Tap mic and say something like “Search Python tutorials”</p>
 
-    <div class="terminal-box glow text-left">
-      <p id="output" class="text-lg leading-relaxed typing">Press and hold the mic to begin...</p>
-    </div>
-
-    <div class="mt-10">
-      <button id="micButton" class="mic-btn glow transition">
-        🎤
-      </button>
-    </div>
+    <button id="micBtn" class="w-16 h-16 rounded-full bg-cyan-400 text-white text-2xl mic-glow hover:scale-105 transition">🎤</button>
   </div>
 
   <script>
-    const micButton = document.getElementById("micButton");
-    const output = document.getElementById("output");
-
+    const micBtn = document.getElementById("micBtn");
+    const status = document.getElementById("status");
     let recognition;
-    let isListening = false;
 
-    function updateText(text, animate = true) {
-      output.classList.remove("typing");
-      output.textContent = text;
-      if (animate) output.classList.add("typing");
+    function update(text, typing = true) {
+      status.classList.remove("typing");
+      status.textContent = text;
+      if (typing) status.classList.add("typing");
     }
 
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -91,62 +60,29 @@
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
 
-      recognition.onstart = () => {
-        updateText("Listening...", true);
-      };
-
+      recognition.onstart = () => update("🎧 Listening...");
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript.toLowerCase();
-        updateText(`🧠 You said: "${transcript}"`, false);
+        update(`🗣 You said: "${transcript}"`, false);
+
         if (transcript.includes("search")) {
-          const query = transcript.split("search").pop().trim();
+          const query = transcript.replace("search", "").trim();
           if (query) {
             window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
           } else {
-            updateText("❗ Say 'search' followed by your query.");
+            update("Say: 'Search' followed by your topic");
           }
         }
       };
 
-      recognition.onerror = (event) => {
-        updateText(`⚠️ Error: ${event.error}`, false);
-      };
-
-      recognition.onend = () => {
-        isListening = false;
-        updateText("🎤 Press and hold the mic to begin...");
-      };
+      recognition.onerror = (e) => update("Error: " + e.error, false);
+      recognition.onend = () => update("✅ Tap mic and say: 'Search X'", true);
     } else {
-      updateText("❌ Speech recognition not supported in this browser.");
+      update("❌ Speech recognition not supported", false);
     }
 
-    micButton.addEventListener("mousedown", () => {
-      if (recognition && !isListening) {
-        recognition.start();
-        isListening = true;
-      }
-    });
-
-    micButton.addEventListener("mouseup", () => {
-      if (recognition && isListening) {
-        recognition.stop();
-        isListening = false;
-      }
-    });
-
-    micButton.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      if (recognition && !isListening) {
-        recognition.start();
-        isListening = true;
-      }
-    });
-
-    micButton.addEventListener("touchend", () => {
-      if (recognition && isListening) {
-        recognition.stop();
-        isListening = false;
-      }
+    micBtn.addEventListener("click", () => {
+      if (recognition) recognition.start();
     });
   </script>
 </body>
